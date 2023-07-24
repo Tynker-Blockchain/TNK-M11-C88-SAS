@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Intorduction to Block</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+			rel="stylesheet" />
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="{{ '/static/css/style.css' }}" />
+	</head>
+
+	<body>
+		<div class="container-fluid d-flex justify-content-center align-items-center p-5 h-100">
+			<div class="form-container">
+				<div class="form-inner">
+				<form action="{{url_for('home', form ='f1')}}" method="post" id="form1" >
+					<div class="form-group">
+						<label>Sender:</label>
+						<input type="text" name="sender" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label>Receiver:</label>
+						<input type="text" name="receiver" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label>Amount:</label>
+						<input type="text" name="amount" class="form-control" />
+					</div>
+					<button type="submit" class="btn">SEND</button>
+				</form>
+				</div>
+			</div>
+            
+			<div id="all-boxes1">
+				{% if blockData %}
+					{% for block in blockData %}
+						<div class="box-container">
+							<div
+								class="box"
+								onmousedown="startDrag(event)"
+								onmousemove="drag(event)"
+								onmouseup="endDrag(event)"
+								onclick= "toggleInfoSection( {{ block.index }}, 
+								                             {{ block.timestamp }}, 
+															'{{block.currentHash}}', 
+															'{{block.previousHash}}', 
+															'{{block.transaction['sender']}}', 
+															'{{block.transaction['receiver']}}', 
+															'{{block.transaction['amount']}}',
+															'{{ block.isValid }}'
+															)">
+								<div class="box-front" {% if(block.isValid == False) %} 
+								                           style="background: linear-gradient(45deg, #ff7e7e, #ff0000);"
+													    {% endif %}    
+														   >
+												{{block.index}}
+								</div>
+								<div class="box-back"{% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-right" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-left" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-top" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-bottom" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+							</div>
+						</div>
+						
+					{% endfor %}
+				{% endif %}
+			</div>
+			<div id="all-boxes2">
+				<!--Write this section of code as  written above for the blockData-->
+				{% if invalidBlocks %}
+					{% for block in invalidBlocks %}
+						<div class="box-container">
+							<div
+								class="box"
+								onmousedown="startDrag(event)"
+								onmousemove="drag(event)"
+								onmouseup="endDrag(event)"
+								onclick= "toggleInfoSection( {{ block.index }}, 
+								                             {{ block.timestamp }}, 
+															'{{block.currentHash}}', 
+															'{{block.previousHash}}', 
+															'{{block.transaction['sender']}}', 
+															'{{block.transaction['receiver']}}', 
+															'{{block.transaction['amount']}}',
+															'{{ block.isValid }}'
+															)">
+								<div class="box-front" {% if(block.isValid == False) %} 
+								                           style="background: linear-gradient(45deg, #ff7e7e, #ff0000);"
+													    {% endif %}    
+														   >
+												{{block.index}}
+								</div>
+								<div class="box-back"{% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-right" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-left" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-top" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+								<div class="box-bottom" {% if(block.isValid == False) %} style="background: linear-gradient(45deg, #ff7e7e, #ff0000);" {% endif %} ></div>
+							</div>
+						</div>
+						
+					{% endfor %}
+				{% endif %}
+			</div>
+
+			<div class="info-section text-white " id="infoSection">
+				{% if blockData %}
+				<div id="info-title" >
+					<h3 >Block Data</h3>
+				</div>
+				<div id="info-data">
+					<div id="containerMd">
+						<div class="box-container">
+							<div class="box rotate">
+								<div class="box-front">Block</div>
+								<div class="box-back"></div>
+								<div class="box-right"></div>
+								<div class="box-left"></div>
+								<div class="box-top"></div>
+								<div class="box-bottom"></div>
+							</div>
+						</div>
+					</div>
+					<div id="containerLg">
+						<div><b>Index:</b> <span id="indexData"></span></div>
+						<div><b>Previous Hash:</b> <span id="previousHashData"></span></div>
+						<div><b>Current hash:</b> <span  id="currentHashData"></span></div>
+						<div><b>Validation:</b> <span id="validationData"></span></div>
+						<div><b>Sender:</b> <span id="senderData"></span></div>
+						<div><b>Receiver:</b> <span id="receiverData"></span></div>
+						<div><b>Amount:</b> <span id="amountData"></span></div>
+						<div><b>Timestamp:</b> <span id="timeStampData"></span></div>
+					</div>
+				</div>	
+				{% endif %}
+		</div>
+
+		<script>
+			var isDragging = false;
+
+			var xAngle = 0;
+			var yAngle = 0;
+
+			data = [];
+
+			function startDrag(event) {
+				isDragging = true;
+			}
+
+			function drag(event) {
+				if (isDragging) {
+					var dragX =
+						event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+					var dragY =
+						event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+					yAngle += dragX * 0.5;
+					xAngle -= dragY * 0.5;
+					updateRotation();
+				}
+			}
+
+			function endDrag(event) {
+				isDragging = false;
+			}
+
+			function updateRotation() {
+				var box = document.querySelector('.box');
+				box.style.transform =
+					'rotateX(' + xAngle + 'deg) rotateY(' + yAngle + 'deg)';
+			}
+
+			function toggleInfoSection(index, timestamp, currentHash, previousHash, sender, receiver, amount, validation) {
+				var infoSection = document.getElementById('infoSection');
+				infoSection.classList.toggle('active');
+
+				document.getElementById('indexData').innerHTML = index
+				document.getElementById('previousHashData').innerHTML = previousHash
+				document.getElementById('currentHashData').innerHTML = currentHash
+				document.getElementById('senderData').innerHTML = sender
+				document.getElementById('receiverData').innerHTML = receiver
+				document.getElementById('amountData').innerHTML = amount
+				document.getElementById('timeStampData').innerHTML = timestamp
+                document.getElementById('validationData').innerHTML = validation
+
+			}
+		</script>
+	</body>
+</html>
